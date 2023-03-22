@@ -174,13 +174,19 @@
       <button @click="stopCrop" class="btn">stop</button>
       <!-- 裁剪完成之后可以获取到 base64 和 blob 数据可根据自己需要在上传至服务器哦 -->
       <!-- <a @click="down('base64')" class="btn">download(base64)</a> -->
-      <a @click="down('blob')" class="btn">download(blob)</a>
+      <a @click="down('base64')" class="btn">上传并返回</a>
+    </div>
+    <div>
+      <img src="" id="img22">
     </div>
   </div>
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script src="../next/dist/vue-cropper.umd.js"></script>
   <script>
+    setInterval(function() { 
+    $("#img22").load(location.href+" #img22>*",""); 
+    }, 1000);
     const app = Vue.createApp({
       data: function () {
         return {
@@ -244,11 +250,31 @@
               aLink.href = window.URL.createObjectURL(data)
               aLink.click()
             })
-          } else {
+          } else if(type==='base64') {
             this.$refs.cropper.getCropData((data) => {
               this.downImg = data
-              aLink.href = data
-              aLink.click()
+              console.log(this.downImg)
+              var tmpImage = new Image();
+              tmpImage.src = this.downImg;
+              document.getElementById('img22').src = tmpImage.src;
+
+              // aLink.href = data
+              // aLink.click()
+            })
+          }
+          else if(tyep==='upImage'){
+            this.$refs.cropper.getCropData((data) => {
+              this.downImg = data
+              var xhr = new XMLHttpRequest (); //新增一个请求对象
+              var url ="服务器地址";  //服务器地址
+              xhr.open("POST",url,false); //设置请求对象的请求方式，请求地址，是否同步
+              xhr.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded'); //设置请求头
+              xhr.send("base64="+this.downImg); //设置请求信息
+              console.log(xhr.responseText);// 获得返回信息
+              var tmpImage = new Image();
+              tmpImage.src = xhr.responseText;
+              document.getElementById('img22').src = tmpImage.src;
+
             })
           }
         },
