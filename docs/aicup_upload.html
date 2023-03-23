@@ -162,19 +162,18 @@
         <img :src="modelSrc" alt="">
       </div>
     </div>
-    <p>例子</p>
     <div class="cut">
       <vue-cropper ref="cropper" v-bind="option"></vue-cropper>
     </div>
     <div class="test-button">
-      <label class="btn" for="uploads">upload</label>
+      <label class="btn" for="uploads">上传图片</label>
       <input type="file" id="uploads" style="position:absolute; clip:rect(0 0 0 0);"
         accept="image/png, image/jpeg, image/gif, image/jpg" @change="uploadImg($event, 1)">
-      <button @click="rotateRight" class="btn">rotateRight</button>
-      <button @click="stopCrop" class="btn">stop</button>
-      <!-- 裁剪完成之后可以获取到 base64 和 blob 数据可根据自己需要在上传至服务器哦 -->
-      <!-- <a @click="down('base64')" class="btn">download(base64)</a> -->
-      <a @click="down('base64')" class="btn">上传并返回</a>
+      <button @click="rotateRight" class="btn">旋转</button>
+      <button @click="stopCrop" class="btn">停止裁剪</button>
+      <!-- 未知服务器接口，进入test分支，直接展示原本图片 -->
+      <!-- 当需要上传至服务器时，将其改成send即可 -->
+      <a @click="submit_and_return('test')" class="btn">上传并返回</a>
     </div>
     <div>
       <img src="" id="img22">
@@ -239,30 +238,17 @@
         rotateRight() {
           this.$refs.cropper.rotateRight()
         },
-        down(type) {
-          // event.preventDefault()
-          var aLink = document.createElement('a')
-          aLink.download = 'demo'
-          // 输出
-          if (type === 'blob') {
-            this.$refs.cropper.getCropBlob((data) => {
-              this.downImg = window.URL.createObjectURL(data)
-              aLink.href = window.URL.createObjectURL(data)
-              aLink.click()
-            })
-          } else if(type==='base64') {
+        submit_and_return(todo) {
+          if (todo === 'test') {
             this.$refs.cropper.getCropData((data) => {
               this.downImg = data
               console.log(this.downImg)
               var tmpImage = new Image();
               tmpImage.src = this.downImg;
               document.getElementById('img22').src = tmpImage.src;
-
-              // aLink.href = data
-              // aLink.click()
             })
           }
-          else if(tyep==='upImage'){
+          else if(todo ==='send'){
             this.$refs.cropper.getCropData((data) => {
               this.downImg = data
               var xhr = new XMLHttpRequest (); //新增一个请求对象
@@ -274,7 +260,6 @@
               var tmpImage = new Image();
               tmpImage.src = xhr.responseText;
               document.getElementById('img22').src = tmpImage.src;
-
             })
           }
         },
