@@ -239,6 +239,7 @@
           this.$refs.cropper.rotateRight()
         },
         submit_and_return(todo) {
+          //直接回显裁剪后图像
           if (todo === 'test') {
             this.$refs.cropper.getCropData((data) => {
               this.downImg = data
